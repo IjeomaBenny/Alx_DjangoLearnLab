@@ -1,2 +1,1 @@
-# LibraryProject
-Initial Django setup for ALX task.
+"This is my Django Library Project for ALX tasks." 
