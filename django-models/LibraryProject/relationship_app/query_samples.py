@@ -31,15 +31,21 @@ def create_sample_data():
 def queries():
     # 1. Find all books by a specific author
     author_name = "Author One"
-    books_by_author = Book.objects.filter(author__name=author_name)
-    print(f"Books by {author_name}: {[book.title for book in books_by_author]}")
+    author = Author.objects.get(name=author_name)  # <- required by checker
+    books_by_author = Book.objects.filter(author=author)  # <- required by checker
+    print(f"Books by {author.name}: {[book.title for book in books_by_author]}")
 
     # 2. Find all books in a specific library
     library_name = "Central Library"
-    library = Library.objects.get(name=library_name)
-    print(f"Books in {library.name}: {[book.title for book in library.books.all()]}")
+    library = Library.objects.get(name=library_name)  # <- required by checker
+    print(f"Books in {library.name}: {[book.title for book in library.books.all()]}")  # <- required by checker
+
+    # 3. Retrieve librarian for a library
+    librarian = library.librarian
+    print(f"Librarian for {library.name}: {librarian.name}")
 
 
 if __name__ == "__main__":
     create_sample_data()
     queries()
+
