@@ -4,6 +4,11 @@ from django.views.generic.detail import DetailView
 from .models import Library
 from .models import Book, Author
 
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.shortcuts import redirect
+
+
 
 # Function-based view: list all books with their authors
 def list_books(request):
@@ -25,6 +30,36 @@ def list_authors(request):
 def list_libraries(request):
     libraries = Library.objects.all()
     return render(request, "relationship_app/list_libraries.html", {"libraries": libraries})
+
+# Create Authentication Views in relationship_app/views.py
+# User registration view
+def register_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  # Redirect to login after successful registration
+    else:
+        form = UserCreationForm()
+    return render(request, 'relationship_app/register.html', {'form': form})
+
+# User login view
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('list_books')  # Redirect after login
+    else:
+        form = AuthenticationForm()
+    return render(request, 'relationship_app/login.html', {'form': form})
+
+# User logout view
+def logout_view(request):
+    logout(request)
+    return render(request, 'relationship_app/logout.html')
+
 
 
 # Class-based view: library details (books in the library)
