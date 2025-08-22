@@ -6,7 +6,8 @@ from .models import Book, Author
 
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.shortcuts import redirect
+from django.shortcuts import render, redirect
+
 
 
 
