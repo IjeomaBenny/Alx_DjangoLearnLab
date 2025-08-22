@@ -34,7 +34,8 @@ def queries():
 
     library_name = "Central Library"
     library = Library.objects.get(name=library_name)
-    print(f"Librarian for {library.name}: {library.librarian.name}")
+    print(f"Books in {library.name}: {[book.title for book in library.books.all()]}")
+
 
 if __name__ == "__main__":
     create_sample_data()
