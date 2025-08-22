@@ -27,11 +27,12 @@ def create_sample_data():
 
 # Queries
 def queries():
-    author = Author.objects.get(name="Author One")
+    author_name = "Author One"
+    author = Author.objects.get(name=author_name)
     print(f"Books by {author.name}: {[book.title for book in author.books.all()]}")
 
-    library = Library.objects.get(name="Central Library")
-    print(f"Books in {library.name}: {[book.title for book in library.books.all()]}")
+    library_name = "Central Library"
+    library = Library.objects.get(name=library_name)
     print(f"Librarian for {library.name}: {library.librarian.name}")
 
 if __name__ == "__main__":
