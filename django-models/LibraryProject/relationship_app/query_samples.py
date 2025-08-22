@@ -28,8 +28,9 @@ def create_sample_data():
 # Queries
 def queries():
     author_name = "Author One"
-    author = Author.objects.get(name=author_name)
-    print(f"Books by {author.name}: {[book.title for book in author.books.all()]}")
+    books_by_author = Book.objects.filter(author__name=author_name)
+    print(f"Books by {author_name}: {[book.title for book in books_by_author]}")
+
 
     library_name = "Central Library"
     library = Library.objects.get(name=library_name)
