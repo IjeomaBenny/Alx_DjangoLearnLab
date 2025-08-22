@@ -2,6 +2,8 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import DetailView
 from .models import Book, Library, Author
+from .models import Book, Author, Library
+
 
 # Function-based view: list all books with their authors
 def list_books(request):
@@ -24,7 +26,10 @@ def list_libraries(request):
     return render(request, "relationship_app/list_libraries.html", {"libraries": libraries})
 
 # Class-based view: library details (books in the library)
+from django.views.generic import DetailView
+
 class LibraryDetailView(DetailView):
     model = Library
     template_name = "relationship_app/library_detail.html"
     context_object_name = "library"
+
