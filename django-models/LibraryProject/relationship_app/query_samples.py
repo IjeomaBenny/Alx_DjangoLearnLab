@@ -41,7 +41,7 @@ def queries():
     print(f"Books in {library.name}: {[book.title for book in library.books.all()]}")  # <- required by checker
 
     # 3. Retrieve librarian for a library
-    librarian = library.librarian
+    librarian = Librarian.objects.get(library=library)  # <- required by checker
     print(f"Librarian for {library.name}: {librarian.name}")
 
 
