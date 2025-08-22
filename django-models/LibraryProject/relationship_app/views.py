@@ -1,7 +1,10 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.views.generic.detail import DetailView  # corrected for checker
-from .models import Book, Author, Library  # all models in one line
+from django.views.generic.detail import DetailView
+from .models import Book
+from .models import Author
+from .models import Library
+
 
 
 # Function-based view: list all books with their authors
