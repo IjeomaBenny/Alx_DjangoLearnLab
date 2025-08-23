@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Library Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        a {
+            display: inline-block;
+            margin: 10px 0;
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            padding: 8px 15px;
+            border-radius: 4px;
+        }
+        a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Library System</h1>
+    <p>Please choose an action below:</p>
+    <a href="{% url 'list_books' %}">View Books</a><br>
+    <a href="{% url 'register' %}">Register</a><br>
+    <a href="{% url 'login' %}">Login</a>
+</body>
+</html>
