@@ -53,6 +53,45 @@ CONTENT_SECURITY_POLICY = {
 }
 
 
+# --- HTTPS & HSTS (enabled only in production) ---
+if not DEBUG:
+    # Redirect all HTTP to HTTPS
+    SECURE_SSL_REDIRECT = True
+
+    # HTTP Strict Transport Security (HSTS)
+    SECURE_HSTS_SECONDS = 31536000        # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
+    # Cookies must be sent over HTTPS
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    # Extra secure headers
+    X_FRAME_OPTIONS = 'DENY'
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+
+    # If you're behind a proxy/Load Balancer (e.g., Nginx/Heroku),
+    # uncomment the next line so Django knows the original scheme.
+    # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+    SECURE_BROWSER_XSS_FILTER = True    # Enable browser XSS protection
+
+
+    # ---------------- Security Settings ----------------
+# DEBUG = False must be used in production
+# SECURE_SSL_REDIRECT = True -> Force HTTPS for all requests
+# SECURE_HSTS_SECONDS = 31536000 -> Enforce HTTPS for 1 year
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True -> Apply HTTPS to all subdomains
+# SECURE_HSTS_PRELOAD = True -> Allow site to be added to HSTS preload list
+# SESSION_COOKIE_SECURE = True -> Session cookies only sent via HTTPS
+# CSRF_COOKIE_SECURE = True -> CSRF cookies only sent via HTTPS
+# X_FRAME_OPTIONS = 'DENY' -> Prevent clickjacking
+# SECURE_CONTENT_TYPE_NOSNIFF = True -> Prevent MIME type sniffing
+# SECURE_BROWSER_XSS_FILTER = True -> Enable browser XSS protection
+# ---------------------------------------------------
+
+
 
 
 
