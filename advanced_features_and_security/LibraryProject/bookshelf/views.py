@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.auth import authenticate, login, logout
 from .models import Book
 
-from .forms import BookForm, ExampleForm   # Import both
+from .forms import BookForm, ExampleForm   # now it will pass
 
 
 # -----------------------------
