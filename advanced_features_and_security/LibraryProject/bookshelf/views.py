@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.auth import authenticate, login, logout
 from .models import Book
 
+from .forms import BookForm
+
 # -----------------------------
 # Login view
 # -----------------------------
@@ -33,15 +35,20 @@ def book_list(request):
     books = Book.objects.all()
     return render(request, 'bookshelf/book_list.html', {'books': books})
 
+
+
 @permission_required('bookshelf.can_create', raise_exception=True)
 def book_create(request):
     if request.method == 'POST':
-        title = request.POST.get('title')
-        author = request.POST.get('author')
-        year = request.POST.get('publication_year')
-        Book.objects.create(title=title, author=author, publication_year=year)
-        return redirect('book_list')
-    return render(request, 'bookshelf/book_create.html')
+        form = BookForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('book_list')
+    else:
+        form = BookForm()
+    return render(request, 'bookshelf/book_create.html', {'form': form})
+
+
 
 @permission_required('bookshelf.can_edit', raise_exception=True)
 def book_edit(request, book_id):

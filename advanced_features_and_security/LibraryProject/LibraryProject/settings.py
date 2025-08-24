@@ -23,9 +23,37 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-p6fic)u1vu!keip_-5ml*h+98c5(^i8r3w8%_a^yq2s+2orj=5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False   # Changed from True to False for production security
 
-ALLOWED_HOSTS = []
+# Allowed hosts - specify your domain names here
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+
+
+# Security Settings
+# Browser Security Settings
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Secure cookies
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+# Content Security Policy (CSP) settings
+# settings.py
+
+CONTENT_SECURITY_POLICY = {
+    'DIRECTIVES': {
+        'default-src': ("'self'",),
+        'font-src': ("'self'",),
+        'img-src': ("'self'",),
+        'script-src': ("'self'",),
+        'style-src': ("'self'",),
+    }
+}
+
+
+
 
 
 # Application definition
@@ -39,11 +67,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bookshelf',
     'relationship_app',
+    'csp',
 
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'csp.middleware.CSPMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
