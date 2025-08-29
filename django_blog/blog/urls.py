@@ -16,12 +16,16 @@ urlpatterns = [
     path('profile/edit/', views.profile_edit, name='profile_edit'),
 
      # Posts (CRUD)
+      # Post CRUD (checker-required routes)
+    path('post/new/', views.PostCreateView.as_view(), name='post-create'),
+    path('post/<int:pk>/', views.PostDetailView.as_view(), name='post-detail'),
+    path('post/<int:pk>/update/', views.PostUpdateView.as_view(), name='post-update'),
+    path('post/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post-delete'),
+
+    # List route (needed for templates/success_url)
     path('posts/', views.PostListView.as_view(), name='post-list'),
-    path('posts/new/', views.PostCreateView.as_view(), name='post-create'),
-    path('posts/<int:pk>/', views.PostDetailView.as_view(), name='post-detail'),
-    path('posts/<int:pk>/edit/', views.PostUpdateView.as_view(), name='post-edit'),
-    path('posts/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post-delete'),
 ]
+
 
 
     # (optional) your homepage route if you have one already:

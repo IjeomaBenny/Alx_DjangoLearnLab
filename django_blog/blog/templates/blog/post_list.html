@@ -12,6 +12,13 @@
       <h3><a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></h3>
       <small>by {{ post.author.username }} • {{ post.published_date|date:"Y-m-d H:i" }}</small>
       <p>{{ post.content|truncatewords:30 }}</p>
+
+      {% if user == post.author %}
+        <p>
+          <a href="{% url 'post-update' post.pk %}">Edit</a> |
+          <a href="{% url 'post-delete' post.pk %}">Delete</a>
+        </p>
+      {% endif %}
     </li>
   {% empty %}
     <li>No posts yet.</li>
