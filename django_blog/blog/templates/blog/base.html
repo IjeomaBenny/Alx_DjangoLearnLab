@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Django Blog</title>
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'blog/css/style.css' %}">
+</head>
+<body>
+  <nav>
+    {% if user.is_authenticated %}
+      Hello, {{ user.username }} |
+      <a href="{% url 'profile' %}">Profile</a> |
+      <a href="{% url 'profile_edit' %}">Edit Profile</a> |
+      <a href="{% url 'logout' %}">Logout</a>
+    {% else %}
+      <a href="{% url 'login' %}">Login</a> |
+      <a href="{% url 'register' %}">Register</a>
+    {% endif %}
+  </nav>
+
+  <!-- Flash messages -->
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <!-- Page content -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- JS -->
+  <script src="{% static 'blog/js/script.js' %}"></script>
+</body>
+</html>
