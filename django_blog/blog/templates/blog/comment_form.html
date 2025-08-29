@@ -1,0 +1,10 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<h1>{% if object %}Edit Comment{% else %}Add Comment{% endif %}</h1>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">{% if object %}Save{% else %}Post{% endif %}</button>
+</form>
+<p><a href="{% if object %}{% url 'post-detail' object.post.pk %}{% else %}{{ request.META.HTTP_REFERER|default:'/' }}{% endif %}">Cancel</a></p>
+{% endblock %}

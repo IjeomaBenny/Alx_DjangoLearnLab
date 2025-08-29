@@ -24,6 +24,12 @@ urlpatterns = [
 
     # List route (needed for templates/success_url)
     path('posts/', views.PostListView.as_view(), name='post-list'),
+
+
+    # Comment routes
+    path('post/<int:post_pk>/comments/new/', views.CommentCreateView.as_view(), name='comment-create'),
+    path('comments/<int:pk>/update/', views.CommentUpdateView.as_view(), name='comment-update'),
+    path('comments/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment-delete'),
 ]
 
 
