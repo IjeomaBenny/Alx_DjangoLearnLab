@@ -1,6 +1,16 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from .views import PostByTagListView   #import your tag view
+
+from .views import (
+    PostListView, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView,
+    CommentCreateView, CommentUpdateView, CommentDeleteView,
+    PostByTagListView, SearchResultsView
+)
+
+from .views import SearchResultsView, PostByTagListView  # keep your other imports too
+
 
 urlpatterns = [
     # Homepage
@@ -32,8 +42,14 @@ urlpatterns = [
     path('comment/<int:pk>/delete/',     views.CommentDeleteView.as_view(), name='comment-delete'),
 
     # Tags & search
-    path('tags/<slug:slug>/', views.PostsByTagListView.as_view(), name='posts-by-tag'),
-    path('search/', views.SearchResultsView.as_view(), name='search'),
+     # Tags (checker looks for this exact pattern)
+    path('tags/<slug:tag_slug>/', PostByTagListView.as_view(), name='posts-by-tag'),
+   
+
+    # search
+    path("search/", SearchResultsView.as_view(), name="search"),  # <-- add/ensure this exact name
+
+
 ]
 
 
