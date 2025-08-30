@@ -6,6 +6,16 @@
   <p>{{ post.content|linebreaks }}</p>
 </div>
 
+{# Tags section #}
+{% if post.tags.all %}
+  <p>
+    Tags:
+    {% for t in post.tags.all %}
+      <a href="{% url 'posts-by-tag' t.slug %}">#{{ t.name }}</a>{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+  </p>
+{% endif %}
+
 {% if user == post.author %}
   <p>
     <a href="{% url 'post-update' post.pk %}">Edit</a> |
@@ -14,7 +24,6 @@
 {% endif %}
 
 <!-- FOR COMMENT -->
-
 <hr>
 <h2>Comments ({{ post.comments.count }})</h2>
 
@@ -41,22 +50,12 @@
   <h3>Add a comment</h3>
   <form method="post" action="{% url 'comment-create' post.pk %}">
     {% csrf_token %}
-    {{ form|default:None }} {# ignore if not provided #}
-    {% if not form %}
-      {# if we didn't pass a form from the view, render a fresh one #}
-      {% with dummy_form=None %}
-        {% csrf_token %}
-      {% endwith %}
-    {% endif %}
-    {{ form.as_p|default_if_none:"" }}
-    {% if not form %}
-      <p><textarea name="content" rows="3" placeholder="Write a comment..." required></textarea></p>
-    {% endif %}
+    <p><textarea name="content" rows="3" placeholder="Write a comment..." required></textarea></p>
     <button type="submit">Post Comment</button>
   </form>
 {% else %}
   <p><a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to comment.</p>
 {% endif %}
 
- <p><a href="{% url 'post-list' %}">← Back to posts</a></p>
-  {% endblock %}
+<p><a href="{% url 'post-list' %}">← Back to posts</a></p>
+{% endblock %}
