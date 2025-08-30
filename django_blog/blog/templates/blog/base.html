@@ -18,6 +18,12 @@
       <a href="{% url 'login' %}">Login</a> |
       <a href="{% url 'register' %}">Register</a>
     {% endif %}
+
+    <form method="get" action="{% url 'search' %}" style="display:inline;">
+  <input type="text" name="q" placeholder="Search posts..." value="{{ request.GET.q }}">
+  <button type="submit">Search</button>
+</form>
+
   </nav>
 
   <!-- Flash messages -->
