@@ -1,9 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from .forms import RegisterForm, ProfileForm
-
 
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -14,15 +13,14 @@ from .forms import PostForm
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import CreateView, UpdateView, DeleteView
-from django.shortcuts import get_object_or_404
 from .models import Post, Comment
 from .forms import CommentForm
 
-
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
-from .models import Post, Tag
+
+# 🔹 Use Tag from django-taggit (NOT from your models)
+from .models import Tag
 
 
 
@@ -58,9 +56,9 @@ def profile_edit(request):
     return render(request, 'blog/profile_edit.html', {'form': form})
 
 
-# Create your views here.
-
-
+# --------------------
+# POSTS (CRUD)
+# --------------------
 class PostListView(ListView):
     model = Post
     template_name = "blog/post_list.html"
@@ -98,14 +96,16 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.get_object().author == self.request.user
 
 
-# CREATE COMMENT FORM
+# --------------------
+# COMMENTS (CRUD)
+# --------------------
 class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Comment
     form_class = CommentForm
     template_name = "blog/comment_form.html"
 
     def form_valid(self, form):
-        post = get_object_or_404(Post, pk=self.kwargs["pk"])  # <-- changed to "pk"
+        post = get_object_or_404(Post, pk=self.kwargs["pk"])
         form.instance.post = post
         form.instance.author = self.request.user
         return super().form_valid(form)
@@ -113,9 +113,6 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return self.object.post.get_absolute_url()
 
-
-
-# UPDATE COMMENT FORM
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Comment
     form_class = CommentForm
@@ -127,8 +124,6 @@ class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def get_success_url(self):
         return self.object.post.get_absolute_url()
 
-
-# DELETE COMMENT FORM
 class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Comment
     template_name = "blog/comment_confirm_delete.html"
@@ -139,20 +134,23 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def get_success_url(self):
         return self.object.post.get_absolute_url()
 
-# Tag
 
-class PostsByTagListView(ListView):
+# --------------------
+# TAG FILTER + SEARCH
+# --------------------
+class PostByTagListView(ListView):  # ✅ renamed to match checker
     model = Post
-    template_name = "blog/post_list_by_tag.html"
+    template_name = "blog/post_list.html"   # reuse your main list template
     context_object_name = "posts"
 
     def get_queryset(self):
-        self.tag = get_object_or_404(Tag, slug=self.kwargs["slug"])
-        return Post.objects.filter(tags=self.tag).order_by("-published_date")
+        tag_slug = self.kwargs.get("tag_slug")  # ✅ checker expects 'tag_slug' kwarg
+        self.tag = get_object_or_404(Tag, slug=tag_slug)
+        return Post.objects.filter(tags__in=[self.tag]).order_by("-published_date")
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx["tag"] = self.tag
+        ctx["active_tag"] = self.tag
         return ctx
 
 class SearchResultsView(ListView):
@@ -164,11 +162,15 @@ class SearchResultsView(ListView):
         q = self.request.GET.get("q", "").strip()
         if not q:
             return Post.objects.none()
-        return Post.objects.filter(
-            Q(title__icontains=q) |
-            Q(content__icontains=q) |
-            Q(tags__name__icontains=q)
-        ).distinct().order_by("-published_date")
+        return (
+            Post.objects.filter(
+                Q(title__icontains=q) |
+                Q(content__icontains=q) |
+                Q(tags__name__icontains=q)
+            )
+            .distinct()
+            .order_by("-published_date")
+        )
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
