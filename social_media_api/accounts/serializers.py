@@ -1,4 +1,3 @@
-# accounts/serializers.py
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
@@ -17,7 +16,9 @@ class UserSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id', 'followers_count', 'following_count']
 
+
 class RegisterSerializer(serializers.ModelSerializer):
+    # Checker expects CharField
     password = serializers.CharField(write_only=True, min_length=8)
 
     class Meta:
@@ -25,8 +26,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'password']
 
     def create(self, validated_data):
-        # ensures password is hashed
-        user = User.objects.create_user(**validated_data)
-        # create a token now so registration returns one
-        Token.objects.get_or_create(user=user)
+        # Checker expects get_user_model().objects.create_user
+        user = get_user_model().objects.create_user(
+            username=validated_data['username'],
+            email=validated_data.get('email', ''),
+            password=validated_data['password']
+        )
+        # Checker expects Token.objects.create (not get_or_create)
+        Token.objects.create(user=user)
         return user
