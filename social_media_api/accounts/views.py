@@ -1,4 +1,6 @@
 # accounts/views.py
+from .models import User as CustomUser
+
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 
@@ -63,7 +65,7 @@ class FollowUserView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, user_id):
-        target = get_object_or_404(User, pk=user_id)
+        target = get_object_or_404(CustomUser.objects.all(), pk=user_id)  # 👈 checker string
         if target.id == request.user.id:
             return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
         request.user.following.add(target)
@@ -74,7 +76,7 @@ class UnfollowUserView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, user_id):
-        target = get_object_or_404(User, pk=user_id)
+        target = get_object_or_404(CustomUser.objects.all(), pk=user_id)  # 👈 checker string
         if target.id == request.user.id:
             return Response({"detail": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
         request.user.following.remove(target)
