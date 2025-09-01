@@ -10,20 +10,19 @@ class AuthorMiniSerializer(serializers.ModelSerializer):
         fields = ["id", "username"]
 
 class PostSerializer(serializers.ModelSerializer):
-    author = AuthorMiniSerializer(read_only=True)
-    comments_count = serializers.IntegerField(source="comments.count", read_only=True)
-    likes_count = serializers.IntegerField(source='likes.count', read_only=True)
-
+    author = serializers.SerializerMethodField(read_only=True)
+    likes_count = serializers.IntegerField(source='like_set.count', read_only=True)
 
     class Meta:
         model = Post
-        fields = ["id", "author", "title", "content", "created_at", "updated_at", "comments_count"]
-        read_only_fields = ["id", "author", "created_at", "updated_at", "comments_count"]
+        fields = [
+            'id', 'author', 'title', 'content',
+            'created_at', 'updated_at',
+            'likes_count'   # ✅ add this line
+        ]
 
-    def validate_title(self, value):
-        if not value.strip():
-            raise serializers.ValidationError("Title cannot be empty.")
-        return value
+    def get_author(self, obj):
+        return {"id": obj.author.id, "username": obj.author.username}
 
     def validate_content(self, value):
         if not value.strip():
