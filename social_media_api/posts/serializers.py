@@ -4,25 +4,31 @@ from .models import Post, Comment
 
 User = get_user_model()
 
-class AuthorMiniSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ["id", "username"]
+# posts/serializers.py
+from rest_framework import serializers
+from .models import Post
+
+class AuthorMiniSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    username = serializers.CharField()
 
 class PostSerializer(serializers.ModelSerializer):
     author = serializers.SerializerMethodField(read_only=True)
-    likes_count = serializers.IntegerField(source='like_set.count', read_only=True)
+    comments_count = serializers.IntegerField(source="comments.count", read_only=True)
+    likes_count = serializers.IntegerField(source="likes.count", read_only=True)  # <- use related_name='likes'
 
     class Meta:
         model = Post
         fields = [
-            'id', 'author', 'title', 'content',
-            'created_at', 'updated_at',
-            'likes_count'   # ✅ add this line
+            "id", "author", "title", "content",
+            "created_at", "updated_at",
+            "comments_count", "likes_count"   # <- INCLUDE both here
         ]
+        read_only_fields = ["id", "author", "created_at", "updated_at", "comments_count", "likes_count"]
 
     def get_author(self, obj):
-        return {"id": obj.author.id, "username": obj.author.username}
+        return {"id": obj.author_id, "username": obj.author.username}
+
 
     def validate_content(self, value):
         if not value.strip():
