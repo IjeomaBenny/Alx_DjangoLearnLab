@@ -8,6 +8,12 @@ from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
 from .permissions import IsOwnerOrReadOnly
 
+from django.db.models import Q
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import IsAuthenticated
+from .serializers import PostSerializer
+from .models import Post
+
 class PostViewSet(viewsets.ModelViewSet):
     # ⬇️ Include literal string the checker looks for
     queryset = Post.objects.all()
@@ -43,6 +49,25 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+class FeedView(ListAPIView):
+    """
+    Returns posts by users the current user follows, plus their own posts,
+    ordered newest-first.
+    """
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        u = self.request.user
+        following_qs = u.following.all()   # via related_name on followers
+        return (
+            Post.objects
+            .select_related("author")
+            .filter(Q(author__in=following_qs) | Q(author=u))
+            .order_by('-created_at')
+        )
 
 
 # Create your views here.

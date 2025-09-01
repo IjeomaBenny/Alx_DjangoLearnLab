@@ -36,3 +36,16 @@ Use header: `Authorization: Token <token>`
 - **PATCH** `/api/comments/{id}/` (owner only)
 - **DELETE** `/api/comments/{id}/` (owner only)
 
+
+## Follow & Feed
+
+### Follow / Unfollow
+- **POST** `/api/accounts/follow/<user_id>/`
+- **POST** `/api/accounts/unfollow/<user_id>/`
+Requires `Authorization: Token <token>`
+
+### Feed
+- **GET** `/api/feed/`
+Returns posts by the logged-in user and those they follow, newest first.
+
+
