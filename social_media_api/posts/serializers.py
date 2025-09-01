@@ -12,6 +12,8 @@ class AuthorMiniSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     author = AuthorMiniSerializer(read_only=True)
     comments_count = serializers.IntegerField(source="comments.count", read_only=True)
+    likes_count = serializers.IntegerField(source='likes.count', read_only=True)
+
 
     class Meta:
         model = Post
