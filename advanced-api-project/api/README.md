@@ -38,3 +38,21 @@ Use Django shell:
 - `GET /authors/` → lists authors with nested books (for visual inspection)
 
 
+
+## Book API Endpoints
+
+| Method | Endpoint                  | Auth Required | Description |
+|--------|---------------------------|---------------|-------------|
+| GET    | /books/                   | No            | List all books with filters/search/ordering |
+| GET    | /books/<id>/              | No            | Retrieve single book by ID |
+| POST   | /books/create/            | Yes           | Create a new book |
+| PATCH  | /books/<id>/update/       | Yes           | Update a book (partial) |
+| PUT    | /books/<id>/update/       | Yes           | Update a book (full) |
+| DELETE | /books/<id>/delete/       | Yes           | Delete a book |
+
+### Permissions
+- **Unauthenticated users** → can only GET list/detail
+- **Authenticated users** → can POST, PATCH/PUT, DELETE
+
+### Validation
+- `publication_year` cannot be in the future (enforced in serializer).
