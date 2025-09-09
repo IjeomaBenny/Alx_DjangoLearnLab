@@ -56,3 +56,19 @@ Use Django shell:
 
 ### Validation
 - `publication_year` cannot be in the future (enforced in serializer).
+
+
+## Filtering, Searching, Ordering
+
+### Filtering
+- `?title=<substring>` (icontains)
+- `?author=<id>`
+- `?publication_year=<year>`
+- `?min_year=<year>&max_year=<year>`
+
+### Search
+- `?search=<text>` across `title` and `author__name`
+
+### Ordering
+- `?ordering=publication_year` or `?ordering=-publication_year`
+

@@ -9,6 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Author, Book
 from .serializers import AuthorSerializer, BookSerializer
+from .filters import BookFilter
 
 
 class AuthorListAPIView(APIView):
@@ -24,10 +25,9 @@ class AuthorListAPIView(APIView):
 class BookListView(generics.ListAPIView):
     """
     Lists books with filtering, searching, and ordering.
-    - Permissions: Public read-only (IsAuthenticatedOrReadOnly)
-    - Filters: ?publication_year=1999&author=<author_id>
-    - Range:  ?min_year=1980&max_year=2000  (custom via get_queryset)
-    - Search: ?search=term  (matches title and author name)
+    - Filters (via filterset): ?title=fall  ?author=1  ?publication_year=1960
+      Range: ?min_year=1950&max_year=1970
+    - Search: ?search=achebe  (matches title and author name)
     - Order:  ?ordering=publication_year or ?ordering=-publication_year
     """
     queryset = Book.objects.select_related("author").all().order_by("-id")
@@ -35,10 +35,10 @@ class BookListView(generics.ListAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ["publication_year", "author"]      # exact filters
-    search_fields = ["title", "author__name"]              # icontains search
-    ordering_fields = ["publication_year", "title", "id"]  # allowed ordering fields
-
+    filterset_class = BookFilter                      # <— use our FilterSet
+    search_fields = ["title", "author__name"]
+    ordering_fields = ["publication_year", "title", "id"]
+    
     def get_queryset(self):
         qs = super().get_queryset()
         # Optional range filters:
