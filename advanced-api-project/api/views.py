@@ -1,46 +1,34 @@
-from django.shortcuts import render
-
+# api/views.py
+# api/views.py
+from django.shortcuts import render  # optional; safe to keep
+from rest_framework import generics, filters
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Author
-from .serializers import AuthorSerializer
-
-
-from .models import Book
-from .serializers import BookSerializer
-
-
-
-from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
+
+from .models import Author, Book
+from .serializers import AuthorSerializer, BookSerializer
+
 
 class AuthorListAPIView(APIView):
+    """
+    GET /authors/ — Return all authors with nested books.
+    """
     def get(self, request):
         authors = Author.objects.prefetch_related("books").all()
         return Response(AuthorSerializer(authors, many=True).data)
-    
-
 
 
 # GET /books/ — list all books (public, paginated, filterable)
 class BookListView(generics.ListAPIView):
     """
     Lists books with filtering, searching, and ordering.
+    - Permissions: Public read-only (IsAuthenticatedOrReadOnly)
     - Filters: ?publication_year=1999&author=<author_id>
-               ?min_year=1980&max_year=2000  (custom; see get_queryset)
-    - Search:  ?search=potter  (matches title and author name)
-    - Order:   ?ordering=publication_year or ?ordering=-publication_year
-    """
-
-    """
-    ListAPIView for all books.
-    - Permissions: Public read-only
-    - Supports filters: publication_year, author
-    - Supports custom range (min_year, max_year)
-    - Supports search on title/author name
-    - Supports ordering by publication_year, title, id
+    - Range:  ?min_year=1980&max_year=2000  (custom via get_queryset)
+    - Search: ?search=term  (matches title and author name)
+    - Order:  ?ordering=publication_year or ?ordering=-publication_year
     """
     queryset = Book.objects.select_related("author").all().order_by("-id")
     serializer_class = BookSerializer
@@ -66,7 +54,7 @@ class BookListView(generics.ListAPIView):
 # GET /books/<pk>/ — retrieve one (public)
 class BookDetailView(generics.RetrieveAPIView):
     """
-    Retrieves a single Book by ID.
+    Retrieve a single Book by ID.
     """
     queryset = Book.objects.select_related("author").all()
     serializer_class = BookSerializer
@@ -76,23 +64,23 @@ class BookDetailView(generics.RetrieveAPIView):
 # POST /books/create/ — create (authenticated)
 class BookCreateView(generics.CreateAPIView):
     """
-    Creates a new Book.
+    Create a new Book.
     Validation:
-      - Serializer enforces publication_year not in future.
+      - Serializer enforces publication_year not in the future.
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        # Hook for side effects (e.g., audit logs). We just save.
+        # Hook for side effects (e.g., audit logs).
         serializer.save()
 
 
 # PUT/PATCH /books/<pk>/update/ — update (authenticated)
 class BookUpdateView(generics.UpdateAPIView):
     """
-    Updates an existing Book.
+    Update an existing Book.
     PUT = full update, PATCH = partial update.
     """
     queryset = Book.objects.all()
@@ -107,16 +95,8 @@ class BookUpdateView(generics.UpdateAPIView):
 # DELETE /books/<pk>/delete/ — delete (authenticated)
 class BookDeleteView(generics.DestroyAPIView):
     """
-    Deletes a Book.
+    Delete a Book.
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]
-
-
-
-    
-
-
-
-# Create your views here.
