@@ -72,3 +72,27 @@ Use Django shell:
 ### Ordering
 - `?ordering=publication_year` or `?ordering=-publication_year`
 
+
+
+## Testing
+
+We use Django’s built-in test runner with DRF’s `APITestCase`.
+
+### Run
+```bash
+python manage.py test api
+
+
+CRUD: list, detail, create (201), update (200), delete (204)
+
+Permissions: 403 for unauthenticated write actions
+
+Validation: 400 when publication_year is in the future
+
+Filtering: title, author, publication_year, min_year/max_year
+
+Search: ?search across title and author__name
+
+Ordering: ?ordering on publication_year
+
+
